@@ -21,13 +21,6 @@
 
 ---
 
-## 👨‍💻 Autore
-
-Creato da **flauriola1** per la classe DEVTA2527.  
-*Versione Alpha* 🚀
-
----
-
 ## 📄 Licenza
 
 Questo progetto è rilasciato sotto licenza **MIT**. Sentiti libero di forkare il repository, modificarlo e usarlo per sopravvivere alla noia!
