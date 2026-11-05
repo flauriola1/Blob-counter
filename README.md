@@ -28,8 +28,8 @@ Benvenuti nella **Blob Zone**, la web app definitiva per sopravvivere alle lezio
 
 ## 👨‍💻 Autore
 
-Creato da **Francesco Lauriola** per la classe DEVTA2527.  
-*Versione 0.0 Blob Alpha* 🚀
+Creato da **flauriola1** per la classe DEVTA2527.  
+*Versione Alpha* 🚀
 
 ---
 
