@@ -1,6 +1,5 @@
 # 🐟 Smart Connect: Guida alla Noia (Blob Zone)
 
----
 
 ## 🚀 Funzionalità Principali
 
