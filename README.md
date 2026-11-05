@@ -1,9 +1,5 @@
 # 🐟 Smart Connect: Guida alla Noia (Blob Zone)
 
-> *"L'architettura software ideale non è quella che non ha bug, ma quella in cui fate finta che funzioni abbastanza bene."* — Rofoldo
-
-Benvenuti nella **Blob Zone**, la web app definitiva per sopravvivere alle lezioni più lunghe e soporifere della galassia. Sviluppata con amore, ironia e una quantità sproporzionata di JavaScript.
-
 ---
 
 ## 🚀 Funzionalità Principali
