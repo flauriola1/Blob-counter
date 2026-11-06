@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Connect, guida alla noia by Francesco Lauriola</title>
+    <title>Blob Counter & Altro by Francesco Lauriola</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- html2pdf.js CDN per l'esportazione in PDF -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -122,7 +121,7 @@
             right: 25px;
             z-index: 90;
             cursor: pointer;
-            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: left 3s ease-in-out, top 3s ease-in-out, transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             filter: drop-shadow(0 10px 20px rgba(0,0,0,0.4));
         }
         #floating-pet:hover {
@@ -142,6 +141,37 @@
         }
     </style>
 </head>
+
+<!-- PANIC SCREEN (Finta schermata di codice/terminale serio) -->
+<div id="panic-screen" class="fixed inset-0 bg-[#0c1017] text-emerald-400 font-mono p-6 sm:p-10 z-[200] hidden overflow-auto select-text cursor-default">
+    <div class="max-w-4xl mx-auto space-y-4">
+        <div class="flex justify-between items-center border-b border-emerald-500/20 pb-4">
+            <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span class="text-xs font-bold text-emerald-300">python3 - system_diagnostic_cluster_v4.2.py [SECURE SHELL]</span>
+            </div>
+            <button onclick="togglePanicMode()" class="text-xs bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-3.5 py-1.5 rounded-xl hover:bg-emerald-500/20 font-sans font-bold transition">Torna alla Blob Zone (Esc)</button>
+        </div>
+        <pre class="text-xs sm:text-sm leading-relaxed text-emerald-400/90 whitespace-pre-wrap">
+[INFO] Initializing kernel diagnostic routines...
+[INFO] Loading network socket layers... OK (Port 8080 secure)
+[OK] Database cluster connection established (Node ID: #7, latency: 12ms)
+[DEBUG] Executing background thread pool [worker-01] -> compiling modular components...
+[STATUS] CPU Load: 14.2% | Memory Usage: 1.24 GB / 16.00 GB (7.75%)
+[LOG] 2026-11-06 10:04:12 - Running continuous integration tests for Smart Connect modules...
+[OK] All system integrity checks passed successfully with 0 errors.
+
+root@server-local:~# tail -f /var/log/syslog
+Nov  6 10:04:15 server-local systemd[1]: Started Advanced System Telemetry Daemon.
+Nov  6 10:04:18 server-local kernel: [ 12.451203] usb 1-1: new high-speed USB device number 3 using xhci_hcd
+Nov  6 10:04:22 server-local sshd[4491]: Accepted publickey for root from 192.168.1.50 port 54210 ssh2
+        </pre>
+        <div class="pt-4 text-slate-500 text-xs font-sans">
+            💡 Suggerimento: Premi di nuovo il tasto Panic o ESC per riaprire istantaneamente la Blob Zone.
+        </div>
+    </div>
+</div>
+
 <body id="site-body" class="min-h-full flex flex-col select-none overflow-x-hidden relative" style="--theme-bg: #0a0d14; --theme-primary: #f472b6; --theme-border: rgba(244, 114, 182, 0.15); --theme-glow: rgba(244, 114, 182, 0.2);">
 
     <div id="blob-glow-1" class="fixed top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-pink-600/10 rounded-full blur-[140px] pointer-events-none z-0 animate-pulse-glow" style="background-color: var(--theme-primary);"></div>
@@ -149,24 +179,24 @@
 
     <div id="ambient-quotes-container" class="fixed inset-0 pointer-events-none z-0 overflow-hidden"></div>
 
-    <!-- PET VIRTUALE ANIMATO -->
-    <div id="floating-pet" class="glass-card px-4 py-3 rounded-2xl border flex items-center gap-3 animate-pet-bounce" style="border-color: var(--theme-primary);" title="Il tuo pesciolino blob ti fa compagnia!">
+    <!-- PET VIRTUALE ANIMATO (Viaggiatore) -->
+    <div id="floating-pet" class="glass-card px-4 py-3 rounded-2xl border flex items-center gap-3 animate-pet-bounce" style="border-color: var(--theme-primary); position: fixed; bottom: 25px; right: 25px;" title="Il tuo pesciolino blob viaggia per lo schermo!">
         <div class="text-2xl animate-bounce">🐟</div>
         <div class="hidden sm:block text-left">
-            <p id="pet-speech" class="text-[11px] font-black" style="color: var(--theme-primary);">Blobby è con te!</p>
+            <p id="pet-speech" class="text-[11px] font-black" style="color: var(--theme-primary);">Sto esplorando!</p>
             <p class="text-[9px] text-slate-400">Cliccami per una coccola</p>
         </div>
     </div>
 
-    <!-- Schermata di Blocco Animata (Anti-Click) -->
-    <div id="saving-overlay" class="fixed inset-0 bg-slate-950/70 backdrop-blur-md z-[100] flex flex-col items-center justify-center p-6 transition-opacity duration-300 opacity-0 pointer-events-none">
+    <!-- POPUP OVERLAY "Aggiornamento Blobbers" (Anti-Sovrascrittura & Sincronizzazione Delta) -->
+    <div id="saving-overlay" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-[100] flex flex-col items-center justify-center p-6 transition-opacity duration-300 opacity-0 pointer-events-none">
         <div class="glass-card p-8 rounded-3xl border text-center shadow-2xl flex flex-col items-center space-y-4 animate-pop max-w-xs w-full" style="border-color: var(--theme-primary);">
             <div class="w-16 h-16 rounded-full bg-pink-500/20 border flex items-center justify-center text-3xl animate-bounce" style="border-color: var(--theme-primary);">
-                🐟
+                🔄
             </div>
             <div>
-                <h3 id="saving-title" class="text-base font-black text-slate-100">Sincronizzazione in corso...</h3>
-                <p id="saving-subtitle" class="text-xs font-medium mt-1" style="color: var(--theme-primary);">Un attimo di pazienza, blobbando con il cloud!</p>
+                <h3 class="text-lg font-black text-slate-100">Aggiornamento Blobbers 🐟</h3>
+                <p id="saving-subtitle" class="text-xs font-medium mt-1" style="color: var(--theme-primary);">Sincronizzazione Delta in corso...</p>
             </div>
             <div class="w-full bg-slate-900/80 rounded-full h-1.5 overflow-hidden border border-white/5">
                 <div class="h-full w-full animate-pulse" style="background-color: var(--theme-primary);"></div>
@@ -181,30 +211,35 @@
                 <div class="flex items-center gap-2 justify-center md:justify-start flex-wrap">
                     <span id="badge-theme" class="px-3 py-1 rounded-full bg-pink-500/10 border text-xs font-bold tracking-widest uppercase flex items-center gap-1.5" style="border-color: var(--theme-primary); color: var(--theme-primary);">
                         <span class="w-2 h-2 rounded-full animate-ping" style="background-color: var(--theme-primary);" id="badge-dot"></span>
-                        Blob Zone Active 🐟 (v004)
+                        Blob Zone Active 🐟 (V0.3(007) - Delta Retry Edition)
                     </span>
                     <span id="online-users-badge" class="px-2.5 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-300 text-[11px] font-bold flex items-center gap-1.5">
                         🟢 <span id="online-count">1</span> blobbatori: <span id="online-names" class="font-normal text-slate-300">Tu</span>
                     </span>
                 </div>
                 <h1 class="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight mt-2 bg-gradient-to-r from-slate-100 via-pink-200 to-rose-400 bg-clip-text text-transparent" id="header-title-gradient">
-                    Smart Connect, guida alla noia by Francesco Lauriola
+                    Blob Counter & Altro by Francesco Lauriola
                 </h1>
                 <p class="text-xs sm:text-sm text-slate-400 font-medium mt-1">
                     Blob counter, citazioni, calendario, mini gioco e chat blobbosa! ☕✨
                 </p>
             </div>
 
-            <!-- SELETTORE DI TEMI COLORE -->
-            <div class="glass-card px-4 py-2.5 rounded-2xl flex items-center gap-2 shadow-lg flex-wrap justify-center">
-                <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Tema:</span>
-                <button onclick="setTheme('pink')" class="w-5 h-5 rounded-full bg-pink-500 hover:scale-110 transition shadow-md" title="Pink Cyber"></button>
-                <button onclick="setTheme('red')" class="w-5 h-5 rounded-full bg-red-600 hover:scale-110 transition shadow-md" title="Rosso Fuoco"></button>
-                <button onclick="setTheme('crimson')" class="w-5 h-5 rounded-full bg-rose-700 hover:scale-110 transition shadow-md border border-rose-400/50" title="Rosso Cremisi"></button>
-                <button onclick="setTheme('christmas')" class="w-5 h-5 rounded-full bg-emerald-600 hover:scale-110 transition shadow-md border border-red-500" title="Tema Natale 🎄"></button>
-                <button onclick="setTheme('green')" class="w-5 h-5 rounded-full bg-emerald-400 hover:scale-110 transition shadow-md" title="Matrix Green"></button>
-                <button onclick="setTheme('indigo')" class="w-5 h-5 rounded-full bg-indigo-500 hover:scale-110 transition shadow-md" title="Cyber Indigo"></button>
-                <button onclick="setTheme('sunset')" class="w-5 h-5 rounded-full bg-amber-500 hover:scale-110 transition shadow-md" title="Sunset Orange"></button>
+            <!-- SELETTORE DI TEMI COLORE + PANIC BUTTON -->
+            <div class="flex items-center gap-2 flex-wrap justify-center">
+                <button onclick="togglePanicMode()" class="glass-card px-4 py-2.5 rounded-2xl text-xs font-black text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/10 transition flex items-center gap-1.5 shadow-lg" title="Schermata d'emergenza professore!">
+                    <span>🚨 Panic</span>
+                </button>
+                <div class="glass-card px-4 py-2.5 rounded-2xl flex items-center gap-2 shadow-lg flex-wrap justify-center">
+                    <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Tema:</span>
+                    <button onclick="setTheme('pink')" class="w-5 h-5 rounded-full bg-pink-500 hover:scale-110 transition shadow-md" title="Pink Cyber"></button>
+                    <button onclick="setTheme('red')" class="w-5 h-5 rounded-full bg-red-600 hover:scale-110 transition shadow-md" title="Rosso Fuoco"></button>
+                    <button onclick="setTheme('crimson')" class="w-5 h-5 rounded-full bg-rose-700 hover:scale-110 transition shadow-md border border-rose-400/50" title="Rosso Cremisi"></button>
+                    <button onclick="setTheme('christmas')" class="w-5 h-5 rounded-full bg-emerald-600 hover:scale-110 transition shadow-md border border-red-500" title="Tema Natale 🎄"></button>
+                    <button onclick="setTheme('green')" class="w-5 h-5 rounded-full bg-emerald-400 hover:scale-110 transition shadow-md" title="Matrix Green"></button>
+                    <button onclick="setTheme('indigo')" class="w-5 h-5 rounded-full bg-indigo-500 hover:scale-110 transition shadow-md" title="Cyber Indigo"></button>
+                    <button onclick="setTheme('sunset')" class="w-5 h-5 rounded-full bg-amber-500 hover:scale-110 transition shadow-md" title="Sunset Orange"></button>
+                </div>
             </div>
         </header>
 
@@ -260,16 +295,6 @@
                         </div>
                     </div>
 
-                    <!-- Passo Modifier -->
-                    <div class="flex flex-wrap items-center justify-center gap-3 my-3">
-                        <div class="flex items-center gap-1.5 glass-card p-1.5 rounded-2xl">
-                            <span class="text-xs font-bold px-3 text-slate-400">PASSO:</span>
-                            <button class="step-btn px-4 py-1.5 rounded-xl text-xs font-bold transition bg-pink-500/20 text-pink-400 border border-pink-500/30" data-step="1" id="step-btn-1">+1</button>
-                            <button class="step-btn px-4 py-1.5 rounded-xl text-xs font-bold transition text-slate-400 hover:text-slate-200 hover:bg-white/5" data-step="5">+5</button>
-                            <button class="step-btn px-4 py-1.5 rounded-xl text-xs font-bold transition text-slate-400 hover:text-slate-200 hover:bg-white/5" data-step="10">+10</button>
-                        </div>
-                    </div>
-
                     <div class="mt-4 pt-4 border-t border-white/5">
                         <span id="current-date-label" class="text-xs font-bold uppercase tracking-wider block" style="color: var(--theme-primary);">Lezione di Oggi</span>
                         <p id="counter-display" class="text-5xl sm:text-6xl font-black text-slate-100 mt-1 tracking-tight">0</p>
@@ -286,7 +311,7 @@
                         <span class="text-xs text-slate-400 font-medium mt-1 block">Tutte le lezioni</span>
                     </div>
 
-                    <!-- NUOVO BOX LEADERBOARD -->
+                    <!-- LEADERBOARD -->
                     <div class="glass-card p-6 rounded-3xl border border-pink-500/20 shadow-xl">
                         <div class="flex justify-between items-center mb-3 pb-2 border-b border-white/10">
                             <h2 class="text-sm font-black text-slate-100 flex items-center gap-2">
@@ -304,24 +329,6 @@
                             <span>⏱️ Tempo perso a lezione:</span>
                         </span>
                         <span id="boredom-timer" class="font-black px-3.5 py-2 rounded-xl border border-pink-500/20" style="color: var(--theme-primary); background-color: var(--theme-glow);">0 min 0 sec</span>
-                    </div>
-
-                    <!-- Soundboard -->
-                    <div class="glass-card p-6 rounded-3xl">
-                        <h2 class="text-sm font-bold text-slate-200 mb-3 flex items-center gap-2">
-                            <span>🎵 Soundboard da Lezione</span>
-                        </h2>
-                        <div class="grid grid-cols-3 gap-2.5">
-                            <button onclick="playCustomSound('bip')" class="glass-card p-3.5 rounded-2xl text-xs font-bold text-slate-300 hover:text-pink-400 hover:border-pink-500/30 transition text-center shadow-md">
-                                🔊 Spiegazione
-                            </button>
-                            <button onclick="playCustomSound('notification')" class="glass-card p-3.5 rounded-2xl text-xs font-bold text-slate-300 hover:text-pink-400 hover:border-pink-500/30 transition text-center shadow-md">
-                                🔔 Notifica
-                            </button>
-                            <button onclick="playCustomSound('applause')" class="glass-card p-3.5 rounded-2xl text-xs font-bold text-slate-300 hover:text-pink-400 hover:border-pink-500/30 transition text-center shadow-md">
-                                👏 Applauso
-                            </button>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -360,6 +367,29 @@
                 </div>
             </section>
 
+            <!-- MEMOMETRO SECTION -->
+            <section class="w-full">
+                <div class="glass-card p-6 sm:p-8 rounded-3xl border border-amber-500/20 shadow-xl">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-5 pb-4 border-b border-white/10">
+                        <div>
+                            <h2 class="text-xl font-black text-slate-100 flex items-center gap-2">
+                                <span>🎭 Memometro della Classe</span>
+                            </h2>
+                            <p class="text-xs text-amber-400 mt-0.5">Le battute, i meme e le perle flash dei blobber votabili in tempo reale</p>
+                        </div>
+                        <button id="btn-add-meme" class="bg-gradient-to-r from-amber-500 to-orange-600 hover:opacity-90 text-white font-extrabold text-xs px-5 py-3 rounded-2xl shadow-lg active:scale-95 transition whitespace-nowrap">
+                            + Aggiungi Meme 🎭
+                        </button>
+                    </div>
+
+                    <div id="memes-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 max-h-[380px] overflow-y-auto pr-1">
+                        <div class="glass-card p-4 rounded-2xl border border-white/5 flex flex-col justify-between text-xs animate-pop">
+                            <p class="text-slate-200 font-medium italic mb-2">"Caricamento memometro..."</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             <!-- Riga Simmetrica: Perle del Blobfish & Segreti di Rofoldo -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
                 <!-- Sezione Citazioni -->
@@ -374,9 +404,6 @@
                             </div>
 
                             <div class="flex items-center gap-2 flex-wrap">
-                                <button onclick="exportQuotesToPDF()" class="px-3 py-2 rounded-2xl bg-pink-500/10 border border-pink-500/20 text-pink-300 font-bold text-xs hover:bg-pink-500/20 transition flex items-center gap-1 shadow-sm">
-                                    📄 PDF
-                                </button>
                                 <button id="btn-add-quote" class="flex items-center gap-2 bg-gradient-to-r from-pink-500 to-rose-600 hover:opacity-90 text-white px-4 py-2.5 rounded-2xl font-bold text-xs shadow-lg active:scale-95 transition whitespace-nowrap" style="background-image: linear-gradient(to right, var(--theme-primary), #e11d48);">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
                                     Aggiungi
@@ -400,9 +427,6 @@
                             </div>
 
                             <div class="flex items-center gap-2 flex-wrap">
-                                <button onclick="exportSecretsToPDF()" class="px-3 py-2 rounded-2xl bg-purple-500/10 border border-purple-500/20 text-purple-300 font-bold text-xs hover:bg-purple-500/20 transition flex items-center gap-1 shadow-sm">
-                                    📄 PDF
-                                </button>
                                 <button id="btn-add-secret" class="flex items-center gap-2 bg-gradient-to-r from-purple-500 to-indigo-600 hover:opacity-90 text-white px-4 py-2.5 rounded-2xl font-bold text-xs shadow-lg shadow-purple-500/20 active:scale-95 transition whitespace-nowrap">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
                                     Aggiungi Segreto
@@ -510,7 +534,7 @@
                 <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6 pb-4 border-b border-white/10 text-center sm:text-left">
                     <div>
                         <h2 class="text-xl sm:text-2xl font-black text-slate-100 flex items-center gap-2"><span>💡 Info & Credits</span></h2>
-                        <p class="text-xs sm:text-sm font-medium mt-1" style="color: var(--theme-primary);">Versione 004 (0.1 Alpha Edition) 🚀</p>
+                        <p class="text-xs sm:text-sm font-medium mt-1" style="color: var(--theme-primary);">Versione V0.3(007) - Delta Retry Edition 🚀</p>
                     </div>
                     <span class="px-4 py-1.5 rounded-full border text-xs font-bold" style="background-color: var(--theme-glow); color: var(--theme-primary); border-color: var(--theme-primary);">Francesco Lauriola 🐟</span>
                 </div>
@@ -525,7 +549,7 @@
                         <ul class="space-y-1.5 text-slate-300 text-xs">
                             <li>🔹 <strong>Tailwind CSS & Glassmorphism</strong></li>
                             <li>🔹 <strong>JavaScript Vanilla + Live Pet</strong></li>
-                            <li>🔹 <strong>npoint API (Safe Lock Sync)</strong></li>
+                            <li>🔹 <strong>npoint API (Atomic Delta Merge & Retry Loop)</strong></li>
                         </ul>
                     </div>
                 </div>
@@ -541,7 +565,7 @@
 
         <!-- Footer -->
         <footer class="w-full py-8 text-center text-xs font-medium text-slate-500 border-t border-white/5 mt-12 z-10 relative">
-            Smart Connect, guida alla noia by Francesco Lauriola — GitHub Pages, 2026 (v004) 🚀
+            Blob Counter & Altro by Francesco Lauriola — GitHub Pages, 2026 (V0.3(007) - Delta Retry Edition) 🚀
         </footer>
     </div>
 
@@ -578,6 +602,9 @@
                 </button>
                 <button onclick="promptClearSecrets()" class="w-full py-3 px-4 rounded-2xl bg-purple-500/10 hover:bg-purple-500/20 text-purple-300 border border-purple-500/30 font-bold text-xs transition text-left flex items-center justify-between">
                     <span>Azzera Tutti i Segreti</span><span>🤫</span>
+                </button>
+                <button onclick="promptClearMemes()" class="w-full py-3 px-4 rounded-2xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 font-bold text-xs transition text-left flex items-center justify-between">
+                    <span>Azzera Tutti i Meme</span><span>🎭</span>
                 </button>
                 <button onclick="openUsersManagement()" class="w-full py-3 px-4 rounded-2xl bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 font-bold text-xs transition text-left flex items-center justify-between">
                     <span>Gestione Utenti / Rimozione</span><span>👥</span>
@@ -716,6 +743,22 @@
             </form>
         </div>
 
+        <!-- Modale Azzera Meme -->
+        <div id="clear-memes-modal" class="glass-card p-6 sm:p-8 max-w-md w-full rounded-3xl shadow-2xl border border-white/10 hidden">
+            <h3 class="text-lg font-bold text-rose-400 mb-2">Azzera Tutti i Meme</h3>
+            <form id="clear-memes-form" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Password Riservata</label>
+                    <input type="password" id="clear-memes-pass" required placeholder="Password" class="w-full p-3 rounded-2xl glass-input outline-none transition text-sm">
+                    <p id="clear-memes-error" class="text-xs text-rose-400 font-medium mt-1 hidden">Password errata!</p>
+                </div>
+                <div class="flex justify-end gap-3 pt-2">
+                    <button type="button" id="btn-cancel-clear-memes" class="px-5 py-2.5 rounded-2xl font-bold text-xs text-slate-400">Annulla</button>
+                    <button type="submit" class="px-5 py-2.5 rounded-2xl font-bold text-xs bg-rose-500 text-white">Svuota Meme</button>
+                </div>
+            </form>
+        </div>
+
         <!-- Modale Pulisci Chat -->
         <div id="clear-chat-modal" class="glass-card p-6 sm:p-8 max-w-md w-full rounded-3xl shadow-2xl border border-white/10 hidden">
             <h3 class="text-lg font-bold text-rose-400 mb-2">Pulisci Intera Chat</h3>
@@ -748,6 +791,25 @@
                 </div>
             </form>
         </div>
+
+        <!-- Modale Aggiungi Meme -->
+        <div id="meme-modal" class="glass-card p-6 sm:p-8 max-w-md w-full rounded-3xl shadow-2xl border border-amber-500/30 hidden">
+            <h3 class="text-lg font-bold text-amber-300 mb-4">Aggiungi Meme al Memometro 🎭</h3>
+            <form id="meme-form" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-amber-300/80 mb-1">Testo del Meme / Battuta</label>
+                    <textarea id="meme-text" required rows="3" placeholder="Es. Quando compila al primo colpo ma non sai perché..." class="w-full p-3 rounded-2xl glass-input outline-none transition text-sm"></textarea>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-amber-300/80 mb-1">Autore</label>
+                    <input type="text" id="meme-author" placeholder="Il tuo nome" class="w-full p-3 rounded-2xl glass-input outline-none transition text-sm">
+                </div>
+                <div class="flex justify-end gap-3 pt-2">
+                    <button type="button" id="btn-cancel-meme" class="px-5 py-2.5 rounded-2xl font-bold text-xs text-slate-400 hover:text-slate-200">Annulla</button>
+                    <button type="submit" class="px-5 py-2.5 rounded-2xl font-bold text-xs bg-amber-500 text-slate-950 font-extrabold shadow-lg">Pubblica Meme</button>
+                </div>
+            </form>
+        </div>
     </div>
 
     <!-- Script JavaScript -->
@@ -764,6 +826,10 @@
             onlineUsers: {},
             loginLogs: [],
             chatMessages: [],
+            memes: [
+                { id: 'meme-1', text: "Quando il professore dice 'è un esercizio semplice' e spuntano 400 righe di codice.", author: 'Francesco', votes: 5 },
+                { id: 'meme-2', text: "Io che guardo il pesce blob sperando che la lezione finisca prima.", author: 'Rofoldo fan', votes: 3 }
+            ],
             quotes: [
                 { id: 'default-1', text: "L'architettura software ideale non è quella che non ha bug, ma quella in cui fate finta che funzioni abbastanza bene.", author: 'Rofoldo' },
                 { id: 'default-2', text: "Se il codice compila al primo colpo, c'è qualcosa di profondamente sospetto che non state considerando.", author: 'Francesco Lauriola' },
@@ -779,12 +845,13 @@
             return new Date().toISOString().split('T')[0];
         }
 
-        let currentStep = 1;
+        const currentStep = 1;
         let soundEnabled = true;
         let targetItemToDelete = null;
         let lastSerializedData = "";
         let isSaving = false;
         let isSyncing = false;
+        let pendingClicks = 0; // Buffer locale per i clic simultanei
 
         const counterDisplay = document.getElementById('counter-display');
         const totalCounterDisplay = document.getElementById('total-counter-display');
@@ -796,7 +863,6 @@
         const ambientQuotesContainer = document.getElementById('ambient-quotes-container');
         
         const savingOverlay = document.getElementById('saving-overlay');
-        const savingTitle = document.getElementById('saving-title');
         const savingSubtitle = document.getElementById('saving-subtitle');
 
         // Configurazione dei Temi
@@ -823,90 +889,44 @@
         const savedTheme = localStorage.getItem('blob_theme') || 'pink';
         setTheme(savedTheme);
 
-        // Funzioni Esportazione PDF
-        function exportQuotesToPDF() {
-            if (!appData.quotes || appData.quotes.length === 0) {
-                alert("Non ci sono perle da esportare!");
-                return;
-            }
-            const element = document.createElement('div');
-            element.style.padding = '20px';
-            element.style.fontFamily = 'Plus Jakarta Sans, sans-serif';
-            element.style.color = '#111';
-            element.style.background = '#ffffff';
-
-            let htmlContent = `<h1 style="color: #e11d48; border-bottom: 2px solid #e11d48; padding-bottom: 8px; margin-bottom: 20px;">💬 Perle del Blobfish</h1>`;
-            appData.quotes.forEach(q => {
-                htmlContent += `
-                    <div style="margin-bottom: 15px; padding: 12px; background: #f3f4f6; border-left: 4px solid #f472b6; border-radius: 6px;">
-                        <p style="font-size: 14px; margin: 0 0 6px 0; font-weight: 500;">“${escapeHtml(q.text)}”</p>
-                        <p style="font-size: 11px; color: #4b5563; margin: 0; font-weight: bold;">— ${escapeHtml(q.author || 'Anonimo')}</p>
-                    </div>
-                `;
-            });
-            element.innerHTML = htmlContent;
-
-            html2pdf().set({
-                margin: 10,
-                filename: 'Perle_del_Blobfish.pdf',
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            }).from(element).save();
-        }
-
-        function exportSecretsToPDF() {
-            if (!appData.secrets || appData.secrets.length === 0) {
-                alert("Non ci sono segreti da esportare!");
-                return;
-            }
-            const element = document.createElement('div');
-            element.style.padding = '20px';
-            element.style.fontFamily = 'Plus Jakarta Sans, sans-serif';
-            element.style.color = '#111';
-            element.style.background = '#ffffff';
-
-            let htmlContent = `<h1 style="color: #a855f7; border-bottom: 2px solid #a855f7; padding-bottom: 8px; margin-bottom: 20px;">🤫 Segreti di Rofoldo</h1>`;
-            appData.secrets.forEach(s => {
-                htmlContent += `
-                    <div style="margin-bottom: 15px; padding: 12px; background: #faf5ff; border-left: 4px solid #a855f7; border-radius: 6px;">
-                        <p style="font-size: 14px; margin: 0 0 6px 0; font-weight: 500;">“${escapeHtml(s.text)}”</p>
-                        <p style="font-size: 11px; color: #6b21a8; margin: 0; font-weight: bold;">— ${escapeHtml(s.author || 'Rofoldo')}</p>
-                    </div>
-                `;
-            });
-            element.innerHTML = htmlContent;
-
-            html2pdf().set({
-                margin: 10,
-                filename: 'Segreti_di_Rofoldo.pdf',
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            }).from(element).save();
-        }
-
-        // Interazione Pet Animato
+        // --- VIAGGIO DI BLOBBY PER LO SCHERMO ---
+        const floatingPet = document.getElementById('floating-pet');
         const petSpeech = document.getElementById('pet-speech');
-        const petPhrases = ["Blob!", "Che noia...", "Clicca il pesce!", "Zzz...", "Studio matto e disperatissimo 🐟"];
-        document.getElementById('floating-pet').addEventListener('click', () => {
+        const petPhrases = ["Sto esplorando!", "Vwuuuush!", "Giretto nello schermo 🐟", "Che c'è laggiù?", "Zzz...", "Studio matto e disperatissimo!"];
+
+        function startBlobbyJourney() {
+            if (!floatingPet) return;
+            const maxX = window.innerWidth - floatingPet.offsetWidth - 30;
+            const maxY = window.innerHeight - floatingPet.offsetHeight - 30;
+            const randomX = Math.max(20, Math.floor(Math.random() * maxX));
+            const randomY = Math.max(20, Math.floor(Math.random() * maxY));
+
+            floatingPet.style.left = `${randomX}px`;
+            floatingPet.style.top = `${randomY}px`;
+            floatingPet.style.bottom = 'auto';
+            floatingPet.style.right = 'auto';
+
             const randomPhrase = petPhrases[Math.floor(Math.random() * petPhrases.length)];
             petSpeech.textContent = randomPhrase;
+        }
+
+        setInterval(startBlobbyJourney, 6000);
+
+        floatingPet.addEventListener('click', () => {
+            petSpeech.textContent = "Ahi! Mi hai preso! 🐟";
             playPopSound();
         });
 
         let idleTimer;
         window.addEventListener('mousemove', () => {
-            petSpeech.textContent = "Blobby è con te!";
             clearTimeout(idleTimer);
             idleTimer = setTimeout(() => {
                 petSpeech.textContent = "Zzz... (Inattivo) 😴";
             }, 10000);
         });
 
-        function showSavingOverlay(title = "Sincronizzazione...", subtitle = "Un attimo di pazienza, blobbando con il cloud!") {
-            savingTitle.textContent = title;
-            savingSubtitle.textContent = subtitle;
+        function showSavingOverlay(subtitleText = "Sincronizzazione Delta in corso...") {
+            savingSubtitle.textContent = subtitleText;
             savingOverlay.classList.remove('opacity-0', 'pointer-events-none');
         }
 
@@ -1076,7 +1096,6 @@
                 return;
             }
             
-            // Ordina gli utenti per punteggio decrescente
             const sortedUsers = Object.entries(appData.userScores).sort((a, b) => b[1] - a[1]);
             
             sortedUsers.forEach(([username, score], index) => {
@@ -1095,24 +1114,28 @@
             });
         }
 
-        async function saveData(customTitle = "Salvataggio in corso...", customSubtitle = "Aggiornando il cloud di classe!") {
+        async function saveData(subText = "Sincronizzazione in corso...") {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 6000);
             try {
                 isSaving = true;
-                showSavingOverlay(customTitle, customSubtitle);
+                showSavingOverlay(subText);
                 const serialized = JSON.stringify(appData);
                 lastSerializedData = serialized;
                 await fetch(API_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: serialized
+                    body: serialized,
+                    signal: controller.signal
                 });
             } catch (e) {
-                console.error("Errore salvataggio:", e);
+                console.warn("Avviso salvataggio:", e);
             } finally {
+                clearTimeout(timeoutId);
                 setTimeout(() => {
                     isSaving = false;
                     hideSavingOverlay();
-                }, 600);
+                }, 300);
             }
         }
 
@@ -1139,6 +1162,7 @@
                             let needsQuotesRender = JSON.stringify(remoteData.quotes) !== JSON.stringify(appData.quotes);
                             let needsSecretsRender = JSON.stringify(remoteData.secrets) !== JSON.stringify(appData.secrets);
                             let needsChatRender = JSON.stringify(remoteData.chatMessages) !== JSON.stringify(appData.chatMessages);
+                            let needsMemesRender = JSON.stringify(remoteData.memes) !== JSON.stringify(appData.memes);
 
                             if (remoteData.dailyCounts) appData.dailyCounts = remoteData.dailyCounts;
                             if (remoteData.userScores) appData.userScores = remoteData.userScores;
@@ -1147,11 +1171,13 @@
                             if (remoteData.chatMessages) appData.chatMessages = remoteData.chatMessages;
                             if (Array.isArray(remoteData.quotes)) appData.quotes = remoteData.quotes;
                             if (Array.isArray(remoteData.secrets)) appData.secrets = remoteData.secrets;
+                            if (Array.isArray(remoteData.memes)) appData.memes = remoteData.memes;
 
                             updateDisplay();
                             if (forceRender || needsQuotesRender) renderQuotes();
                             if (forceRender || needsSecretsRender) renderSecrets();
                             if (forceRender || needsChatRender) renderChatMessages();
+                            if (forceRender || needsMemesRender) renderMemes();
                             updateOnlinePresenceUI();
                         }
                     }
@@ -1163,13 +1189,15 @@
             }
         }
 
-        // Sincronizzazione impostata a 400ms (0.4 secondi)
         setInterval(() => {
             syncData(false);
         }, 400);
 
+        // --- RISOLUZIONE DEFINITIVA CONCORRENZA: DELTA MERGE & RETRY LOOP ---
         function incrementCounter(e) {
             const key = getTodayKey();
+            
+            // 1. Aggiornamento immediato e fluido dell'interfaccia locale
             if (!appData.dailyCounts) appData.dailyCounts = {};
             appData.dailyCounts[key] = (appData.dailyCounts[key] || 0) + currentStep;
 
@@ -1178,13 +1206,93 @@
                 appData.userScores[userName] = (appData.userScores[userName] || 0) + currentStep;
             }
 
+            pendingClicks += currentStep;
+
             updateDisplay();
             playPopSound();
             if (e) createParticles(e.clientX, e.clientY);
+            
             blobWrapper.classList.remove('animate-pop');
             void blobWrapper.offsetWidth;
             blobWrapper.classList.add('animate-pop');
-            saveData("Blobbando...", "Caricamento "+currentStep+" blob nel cloud!");
+
+            // 2. Avvio del salvataggio con debounce e tentativi multipli anti-conflitto
+            debouncedSafeSave();
+        }
+
+        let saveTimeout = null;
+        function debouncedSafeSave() {
+            if (saveTimeout) clearTimeout(saveTimeout);
+            showSavingOverlay("Sincronizzazione Delta Blobbers...");
+
+            saveTimeout = setTimeout(async () => {
+                let success = false;
+                let attempts = 0;
+                const maxAttempts = 5;
+
+                while (!success && attempts < maxAttempts) {
+                    attempts++;
+                    try {
+                        const res = await fetch(API_URL, { cache: 'no-store' });
+                        if (res.ok) {
+                            const remoteData = await res.json();
+                            if (remoteData) {
+                                const key = getTodayKey();
+                                
+                                if (!remoteData.dailyCounts) remoteData.dailyCounts = {};
+                                if (!appData.dailyCounts) appData.dailyCounts = {};
+                                
+                                const remoteVal = remoteData.dailyCounts[key] || 0;
+                                const localBaseVal = appData.dailyCounts[key] || 0;
+                                
+                                // Fusione sicura prendendo il valore massimo o sommando i delta
+                                remoteData.dailyCounts[key] = Math.max(remoteVal, localBaseVal);
+                                appData.dailyCounts[key] = remoteData.dailyCounts[key];
+
+                                if (appData.userScores) {
+                                    if (!remoteData.userScores) remoteData.userScores = {};
+                                    for (let [u, score] of Object.entries(appData.userScores)) {
+                                        if (u === userName) {
+                                            const remoteUserScore = remoteData.userScores[u] || 0;
+                                            remoteData.userScores[u] = Math.max(remoteUserScore, score);
+                                        } else {
+                                            remoteData.userScores[u] = Math.max(remoteData.userScores[u] || 0, score);
+                                        }
+                                    }
+                                    appData.userScores = remoteData.userScores;
+                                }
+
+                                remoteData.chatMessages = appData.chatMessages || remoteData.chatMessages;
+                                remoteData.quotes = appData.quotes || remoteData.quotes;
+                                remoteData.secrets = appData.secrets || remoteData.secrets;
+                                remoteData.memes = appData.memes || remoteData.memes;
+                                remoteData.onlineUsers = Object.assign(remoteData.onlineUsers || {}, appData.onlineUsers || {});
+
+                                const postRes = await fetch(API_URL, {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify(remoteData)
+                                });
+
+                                if (postRes.ok) {
+                                    success = true;
+                                    pendingClicks = 0;
+                                    lastSerializedData = JSON.stringify(remoteData);
+                                }
+                            }
+                        }
+                    } catch (err) {
+                        console.warn(`Tentativo di salvataggio ${attempts} fallito, nuovo tentativo in corso...`, err);
+                        await new Promise(r => setTimeout(r, 250 * attempts));
+                    }
+                }
+
+                setTimeout(() => {
+                    hideSavingOverlay();
+                    isSaving = false;
+                }, 200);
+
+            }, 400);
         }
 
         function renderQuotes() {
@@ -1240,6 +1348,8 @@
             quoteModal.classList.add('hidden');
             secretModal.classList.add('hidden');
             resetModal.classList.add('hidden');
+            if (typeof memeModal !== 'undefined') memeModal.classList.add('hidden');
+            if (typeof adminDashboardModal !== 'undefined') adminDashboardModal.classList.add('hidden');
             deleteQuoteError.classList.add('hidden');
         };
 
@@ -1256,8 +1366,11 @@
                 } else if (targetItemToDelete.type === 'secret') {
                     appData.secrets = appData.secrets.filter(s => s.id !== targetItemToDelete.id);
                     renderSecrets();
+                } else if (targetItemToDelete.type === 'meme') {
+                    appData.memes = appData.memes.filter(m => m.id !== targetItemToDelete.id);
+                    renderMemes();
                 }
-                saveData("Eliminazione...", "Aggiornamento database in corso...");
+                saveData("Aggiornamento Blobbers (Eliminazione)...");
             }
             modalContainer.classList.add('hidden');
             deleteQuoteModal.classList.add('hidden');
@@ -1273,16 +1386,6 @@
         });
 
         blobTarget.addEventListener('click', incrementCounter);
-
-        document.querySelectorAll('.step-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.step-btn').forEach(b => {
-                    b.className = 'step-btn px-4 py-1.5 rounded-xl text-xs font-bold transition text-slate-400 hover:text-slate-200 hover:bg-white/5';
-                });
-                btn.className = 'step-btn px-4 py-1.5 rounded-xl text-xs font-bold transition bg-pink-500/20 text-pink-400 border border-pink-500/30';
-                currentStep = parseInt(btn.dataset.step);
-            });
-        });
 
         btnAddQuote.addEventListener('click', () => {
             modalContainer.classList.remove('hidden');
@@ -1306,7 +1409,7 @@
                 author: document.getElementById('quote-author').value.trim() || userName || 'Anonimo'
             });
             renderQuotes();
-            saveData("Pubblicazione Perla...", "Condividendo la saggezza con la classe...");
+            saveData("Aggiornamento Blobbers (Nuova Perla)...");
             modalContainer.classList.add('hidden');
             quoteModal.classList.add('hidden');
             quoteForm.reset();
@@ -1335,7 +1438,7 @@
                 author: document.getElementById('secret-author').value.trim() || 'Rofoldo'
             });
             renderSecrets();
-            saveData("Salvataggio Segreto...", "Mantenendo il mistero al sicuro...");
+            saveData("Aggiornamento Blobbers (Nuovo Segreto)...");
             modalContainer.classList.add('hidden');
             secretModal.classList.add('hidden');
             secretForm.reset();
@@ -1350,7 +1453,7 @@
             appData.dailyCounts[getTodayKey()] = 0;
             if (userName && appData.userScores) appData.userScores[userName] = 0;
             updateDisplay();
-            saveData("Reset in corso...", "Azzzeramento contatore odierno...");
+            saveData("Aggiornamento Blobbers (Reset Odierno)...");
             modalContainer.classList.add('hidden');
             resetModal.classList.add('hidden');
             resetForm.reset();
@@ -1367,36 +1470,6 @@
             secondsInSite++;
             document.getElementById('boredom-timer').textContent = `${Math.floor(secondsInSite / 60)} min ${secondsInSite % 60} sec`;
         }, 1000);
-
-        window.playCustomSound = function(type) {
-            if (!soundEnabled) return;
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            if (type === 'bip') {
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(150, audioCtx.currentTime);
-                gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
-                osc.connect(gain); gain.connect(audioCtx.destination); osc.start(); osc.stop(audioCtx.currentTime + 0.4);
-            } else if (type === 'notification') {
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(880, audioCtx.currentTime);
-                osc.frequency.setValueAtTime(1174.66, audioCtx.currentTime + 0.1);
-                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
-                osc.connect(gain); gain.connect(audioCtx.destination); osc.start(); osc.stop(audioCtx.currentTime + 0.3);
-            } else if (type === 'applause') {
-                let now = audioCtx.currentTime;
-                [440, 554.37, 659.25, 880].forEach((freq, idx) => {
-                    let o = audioCtx.createOscillator(), g = audioCtx.createGain();
-                    o.frequency.setValueAtTime(freq, now + idx * 0.08);
-                    g.gain.setValueAtTime(0.08, now + idx * 0.08);
-                    g.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.08 + 0.15);
-                    o.connect(g); g.connect(audioCtx.destination); o.start(now + idx * 0.08); o.stop(now + idx * 0.08 + 0.15);
-                });
-            }
-        };
 
         let userName = localStorage.getItem('blob_user_name') || '';
         const nameModal = document.getElementById('name-modal');
@@ -1428,8 +1501,15 @@
             const timeString = new Date().toLocaleString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' });
             appData.loginLogs.push({ name: name, time: timeString });
             
-            await saveData("Registrazione accesso...", "Salvando il tuo log di connessione...");
-            updateOnlinePresence();
+            try {
+                await saveData("Aggiornamento Blobbers (Accesso Utente)...");
+                await updateOnlinePresence();
+            } catch (e) {
+                console.error("Errore registrazione accesso:", e);
+            } finally {
+                hideSavingOverlay();
+                isSaving = false;
+            }
         }
 
         function checkUserName() {
@@ -1481,6 +1561,7 @@
                 resetHistoricalModal.classList.add('hidden');
                 clearQuotesModal.classList.add('hidden');
                 clearSecretsModal.classList.add('hidden');
+                if (typeof clearMemesModal !== 'undefined') clearMemesModal.classList.add('hidden');
                 usersManagementModal.classList.add('hidden');
                 loginLogsModal.classList.add('hidden');
             } else if (passInput !== null) {
@@ -1508,7 +1589,7 @@
             appData.dailyCounts = {};
             appData.userScores = {};
             updateDisplay();
-            saveData("Azzeramento...", "Ripristino totale storico globale...");
+            saveData("Aggiornamento Blobbers (Reset Globale)...");
             modalContainer.classList.add('hidden');
             resetHistoricalModal.classList.add('hidden');
             resetHistoricalForm.reset();
@@ -1551,7 +1632,7 @@
         window.promptClearLogs = async function() {
             if (confirm("Vuoi svuotare completamente lo storico dei log di connessione?")) {
                 appData.loginLogs = [];
-                await saveData("Pulizia log...", "Cancellazione storico connessioni...");
+                await saveData("Aggiornamento Blobbers (Pulizia Log)...");
                 renderLoginLogsList();
             }
         };
@@ -1570,7 +1651,7 @@
             }
             appData.quotes = [];
             renderQuotes();
-            saveData("Svuotamento...", "Eliminazione di tutte le perle...");
+            saveData("Aggiornamento Blobbers (Svuota Citazioni)...");
             modalContainer.classList.add('hidden');
             clearQuotesModal.classList.add('hidden');
             clearQuotesForm.reset();
@@ -1580,6 +1661,36 @@
             modalContainer.classList.add('hidden');
             clearQuotesModal.classList.add('hidden');
             clearQuotesForm.reset();
+        });
+
+        const clearMemesModal = document.getElementById('clear-memes-modal');
+        const clearMemesForm = document.getElementById('clear-memes-form');
+        const clearMemesError = document.getElementById('clear-memes-error');
+
+        window.promptClearMemes = function() {
+            adminDashboardModal.classList.add('hidden');
+            clearMemesModal.classList.remove('hidden');
+            clearMemesError.classList.add('hidden');
+        };
+
+        clearMemesForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (document.getElementById('clear-memes-pass').value.trim() !== ADMIN_PASS) {
+                clearMemesError.classList.remove('hidden');
+                return;
+            }
+            appData.memes = [];
+            renderMemes();
+            saveData("Aggiornamento Blobbers (Svuota Meme)...");
+            modalContainer.classList.add('hidden');
+            clearMemesModal.classList.add('hidden');
+            clearMemesForm.reset();
+        });
+
+        document.getElementById('btn-cancel-clear-memes').addEventListener('click', () => {
+            modalContainer.classList.add('hidden');
+            clearMemesModal.classList.add('hidden');
+            clearMemesForm.reset();
         });
 
         window.promptClearSecrets = function() {
@@ -1596,7 +1707,7 @@
             }
             appData.secrets = [];
             renderSecrets();
-            saveData("Svuotamento...", "Eliminazione di tutti i segreti...");
+            saveData("Aggiornamento Blobbers (Svuota Segreti)...");
             modalContainer.classList.add('hidden');
             clearSecretsModal.classList.add('hidden');
             clearSecretsForm.reset();
@@ -1642,7 +1753,7 @@
             if (confirm(`Eliminare l'utente "${username}"?`)) {
                 if (appData.onlineUsers && appData.onlineUsers[username]) {
                     delete appData.onlineUsers[username];
-                    saveData("Aggiornamento...", "Rimozione utente in corso...");
+                    saveData("Aggiornamento Blobbers (Rimozione Utente)...");
                     renderAdminUsersList();
                     updateOnlinePresence();
                 }
@@ -1659,7 +1770,7 @@
         window.promptDeleteAllUsers = async function() {
             if (confirm("Rimuovere TUTTI gli utenti e richiedere il nome a tutti?")) {
                 appData.onlineUsers = {};
-                saveData("Pulizia utenti...", "Rimozione di tutti i blobbatori...");
+                saveData("Aggiornamento Blobbers (Pulizia Utenti)...");
                 renderAdminUsersList();
                 updateOnlinePresence();
                 localStorage.removeItem('blob_user_name');
@@ -1680,13 +1791,23 @@
 
         async function updateOnlinePresence() {
             if (!userName) return;
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 6000);
             try {
-                let res = await fetch(API_URL, { cache: 'no-store' });
+                let res = await fetch(API_URL, { cache: 'no-store', signal: controller.signal });
                 let data = res.ok ? await res.json() || {} : {};
                 if (!data.onlineUsers) data.onlineUsers = {};
                 const now = Date.now();
                 data.onlineUsers[userName] = now;
                 
+                if (data.dailyCounts) appData.dailyCounts = data.dailyCounts;
+                if (data.userScores) appData.userScores = data.userScores;
+                if (data.chatMessages) appData.chatMessages = data.chatMessages;
+                if (data.quotes) appData.quotes = data.quotes;
+                if (data.secrets) appData.secrets = data.secrets;
+                if (data.memes) appData.memes = data.memes;
+                if (data.loginLogs) appData.loginLogs = data.loginLogs;
+
                 let active = [];
                 for (let [u, t] of Object.entries(data.onlineUsers)) {
                     if (now - t < 30000) active.push(u);
@@ -1694,14 +1815,19 @@
                 }
                 appData.onlineUsers = data.onlineUsers;
                 updateOnlinePresenceUI();
+
                 await fetch(API_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(appData)
+                    body: JSON.stringify(appData),
+                    signal: controller.signal
                 });
             } catch (e) {
+                console.warn("Avviso updateOnlinePresence:", e);
                 onlineCountEl.textContent = "1";
                 onlineNamesEl.textContent = userName || "Tu";
+            } finally {
+                clearTimeout(timeoutId);
             }
         }
 
@@ -1759,7 +1885,7 @@
             }
             appData.chatMessages = [];
             renderChatMessages();
-            saveData("Pulizia chat...", "Cancellazione messaggi in corso...");
+            saveData("Aggiornamento Blobbers (Pulizia Chat)...");
             modalContainer.classList.add('hidden');
             clearBoardForm.reset();
         });
@@ -1790,16 +1916,125 @@
             boardInput.value = '';
             renderChatMessages();
             playPopSound();
-            saveData("Invio in chat...", "Inviando il messaggio alla classe...");
+            saveData("Aggiornamento Blobbers (Invio Chat)...");
         });
 
         window.addEventListener('DOMContentLoaded', () => {
             syncData(true).then(() => {
                 checkUserName();
                 if (userName) greetingText.textContent = getRandomGreeting(userName);
+                renderMemes();
             });
             setTimeout(spawnAmbientQuote, 1000);
         });
+    
+        // --- PANIC MODE LOGIC ---
+        let isPanicActive = false;
+        const panicScreen = document.getElementById('panic-screen');
+
+        window.togglePanicMode = function() {
+            isPanicActive = !isPanicActive;
+            if (isPanicActive) {
+                panicScreen.classList.remove('hidden');
+            } else {
+                panicScreen.classList.add('hidden');
+            }
+        };
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                if (isPanicActive) {
+                    togglePanicMode();
+                }
+                modalContainer.classList.add('hidden');
+            }
+            if ((e.key === 'p' || e.key === 'P') && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
+                togglePanicMode();
+            }
+        });
+
+        // --- MEMOMETRO LOGIC ---
+        const memesContainer = document.getElementById('memes-container');
+        const btnAddMeme = document.getElementById('btn-add-meme');
+        const memeModal = document.getElementById('meme-modal');
+        const btnCancelMeme = document.getElementById('btn-cancel-meme');
+        const memeForm = document.getElementById('meme-form');
+
+        btnAddMeme.addEventListener('click', () => {
+            modalContainer.classList.remove('hidden');
+            memeModal.classList.remove('hidden');
+            quoteModal.classList.add('hidden');
+            secretModal.classList.add('hidden');
+            resetModal.classList.add('hidden');
+            deleteQuoteModal.classList.add('hidden');
+        });
+
+        btnCancelMeme.addEventListener('click', () => {
+            modalContainer.classList.add('hidden');
+            memeModal.classList.add('hidden');
+            memeForm.reset();
+        });
+
+        memeForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            if (!appData.memes) appData.memes = [];
+            appData.memes.push({
+                id: Date.now().toString(),
+                text: document.getElementById('meme-text').value.trim(),
+                author: document.getElementById('meme-author').value.trim() || userName || 'Anonimo',
+                votes: 1,
+                votedBy: [userName]
+            });
+            renderMemes();
+            saveData("Aggiornamento Blobbers (Nuovo Meme)...");
+            modalContainer.classList.add('hidden');
+            memeModal.classList.add('hidden');
+            memeForm.reset();
+        });
+
+        window.voteMeme = function(memeId) {
+            if (!appData.memes) return;
+            const meme = appData.memes.find(m => m.id === memeId);
+            if (meme) {
+                if (!meme.votedBy) meme.votedBy = [];
+                if (userName && meme.votedBy.includes(userName)) {
+                    alert("Hai già votato questo meme!");
+                    return;
+                }
+                meme.votes = (meme.votes || 0) + 1;
+                if (userName) meme.votedBy.includes(userName) || meme.votedBy.push(userName);
+                renderMemes();
+                playPopSound();
+                saveData("Aggiornamento Blobbers (Voto Meme)...");
+            }
+        };
+
+        function renderMemes() {
+            memesContainer.innerHTML = '';
+            if (!appData.memes || appData.memes.length === 0) {
+                memesContainer.innerHTML = '<p class="text-xs text-slate-400 italic text-center py-4 col-span-full">Nessun meme nel memometro.</p>';
+                return;
+            }
+            const sortedMemes = [...appData.memes].sort((a, b) => (b.votes || 0) - (a.votes || 0));
+
+            sortedMemes.forEach(m => {
+                const card = document.createElement('div');
+                card.className = "glass-card glass-card-hover p-4 rounded-2xl flex flex-col justify-between border border-amber-500/20 bg-amber-500/[0.02]";
+                card.innerHTML = `
+                    <div class="mb-3"><p class="text-xs sm:text-sm font-medium leading-relaxed text-amber-100">“${escapeHtml(m.text)}”</p></div>
+                    <div class="flex justify-between items-center text-xs pt-2.5 border-t border-amber-500/10">
+                        <span class="font-semibold text-amber-300">— ${escapeHtml(m.author || 'Anonimo')}</span>
+                        <div class="flex items-center gap-2">
+                            <button onclick="voteMeme('${m.id}')" class="px-2.5 py-1 rounded-xl bg-amber-500/20 text-amber-300 border border-amber-500/30 font-bold hover:bg-amber-500/30 transition flex items-center gap-1">
+                                🔥 <span>${m.votes || 0}</span>
+                            </button>
+                            <button onclick="promptDeleteItem('${m.id}', 'meme')" class="text-slate-400 hover:text-rose-400 transition p-1 text-[11px]" title="Elimina admin">🗑️</button>
+                        </div>
+                    </div>
+                `;
+                memesContainer.appendChild(card);
+            });
+        }
     </script>
 </body>
 </html>
