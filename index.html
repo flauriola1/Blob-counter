@@ -145,7 +145,7 @@
 <!-- PANIC SCREEN (Finta schermata di codice/terminale serio) -->
 <div id="panic-screen" class="fixed inset-0 bg-[#0c1017] text-emerald-400 font-mono p-6 sm:p-10 z-[200] hidden overflow-auto select-text cursor-default">
     <div class="max-w-4xl mx-auto space-y-4">
-        <div class="flex justify-between items-center border-b border-emerald-500/20 pb-4">
+        <div class="flex justify-between items-center border-b border-emerald-500/25 pb-4">
             <div class="flex items-center gap-2">
                 <span class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></span>
                 <span class="text-xs font-bold text-emerald-300">python3 - system_diagnostic_cluster_v4.2.py [SECURE SHELL]</span>
@@ -211,7 +211,7 @@ Nov  6 10:04:22 server-local sshd[4491]: Accepted publickey for root from 192.16
                 <div class="flex items-center gap-2 justify-center md:justify-start flex-wrap">
                     <span id="badge-theme" class="px-3 py-1 rounded-full bg-pink-500/10 border text-xs font-bold tracking-widest uppercase flex items-center gap-1.5" style="border-color: var(--theme-primary); color: var(--theme-primary);">
                         <span class="w-2 h-2 rounded-full animate-ping" style="background-color: var(--theme-primary);" id="badge-dot"></span>
-                        Blob Zone Active 🐟 (V0.3(007) - Delta Retry Edition)
+                        Blob Zone Active 🐟 (V0.3 (006) - Alpha Blob edition)
                     </span>
                     <span id="online-users-badge" class="px-2.5 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-300 text-[11px] font-bold flex items-center gap-1.5">
                         🟢 <span id="online-count">1</span> blobbatori: <span id="online-names" class="font-normal text-slate-300">Tu</span>
@@ -317,7 +317,7 @@ Nov  6 10:04:22 server-local sshd[4491]: Accepted publickey for root from 192.16
                             <h2 class="text-sm font-black text-slate-100 flex items-center gap-2">
                                 <span>🏆 Leaderboard Blobber</span>
                             </h2>
-                            <span class="text-[10px] font-bold text-pink-400 px-2 py-0.5 rounded-full bg-pink-500/10 border border-pink-500/20">Top Clic</span>
+                            <span class="text-[10px] font-bold text-pink-400 px-2 py-0.5 rounded-full bg-pink-500/10 border border-pink-500/2">Top Clic</span>
                         </div>
                         <div id="leaderboard-container" class="space-y-2 max-h-36 overflow-y-auto pr-1">
                             <p class="text-xs text-slate-400 italic text-center py-2">Caricamento classifica...</p>
@@ -534,7 +534,7 @@ Nov  6 10:04:22 server-local sshd[4491]: Accepted publickey for root from 192.16
                 <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6 pb-4 border-b border-white/10 text-center sm:text-left">
                     <div>
                         <h2 class="text-xl sm:text-2xl font-black text-slate-100 flex items-center gap-2"><span>💡 Info & Credits</span></h2>
-                        <p class="text-xs sm:text-sm font-medium mt-1" style="color: var(--theme-primary);">Versione V0.3(007) - Delta Retry Edition 🚀</p>
+                        <p class="text-xs sm:text-sm font-medium mt-1" style="color: var(--theme-primary);">Versione V0.3 (006) - Alpha Blob edition 🚀</p>
                     </div>
                     <span class="px-4 py-1.5 rounded-full border text-xs font-bold" style="background-color: var(--theme-glow); color: var(--theme-primary); border-color: var(--theme-primary);">Francesco Lauriola 🐟</span>
                 </div>
@@ -565,7 +565,7 @@ Nov  6 10:04:22 server-local sshd[4491]: Accepted publickey for root from 192.16
 
         <!-- Footer -->
         <footer class="w-full py-8 text-center text-xs font-medium text-slate-500 border-t border-white/5 mt-12 z-10 relative">
-            Blob Counter & Altro by Francesco Lauriola — GitHub Pages, 2026 (V0.3(007) - Delta Retry Edition) 🚀
+            Blob Counter & Altro by Francesco Lauriola — GitHub Pages, 2026 (V0.3 (006) - Alpha Blob edition) 🚀
         </footer>
     </div>
 
@@ -622,7 +622,7 @@ Nov  6 10:04:22 server-local sshd[4491]: Accepted publickey for root from 192.16
         <div id="login-logs-modal" class="glass-card p-6 sm:p-8 max-w-lg w-full rounded-3xl shadow-2xl border border-amber-500/30 hidden">
             <div class="flex justify-between items-center mb-4 pb-3 border-b border-white/10">
                 <h3 class="text-base font-bold text-amber-300 flex items-center gap-2"><span>📋</span> Storico Log Connessioni</h3>
-                <button onclick="promptClearLogs()" class="text-[11px] text-rose-400 hover:text-rose-300 font-bold px-3 py-1 rounded-xl bg-rose-500/10 border border-rose-500/20">Svuota Log 🗑️</button>
+                <button onclick="promptClearLogs()" class="text-[11px] text-rose-400 hover:text-rose-300 font-bold px-3 py-1 rounded-xl bg-rose-500/10 border border-rose-500/2">Svuota Log 🗑️</button>
             </div>
             <div id="admin-logs-list" class="space-y-2 max-h-60 overflow-y-auto mb-4 pr-1"></div>
             <div class="flex justify-end pt-3 border-t border-white/10">
